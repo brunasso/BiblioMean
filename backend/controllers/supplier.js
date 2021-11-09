@@ -11,7 +11,7 @@ const registerSupplier = async(req,res) => {
     
     const supplierSchema = new supplier({
         name: req.body.name,
-        address: req.body.email,
+        address: req.body.address,
     });
     
     const result = await supplierSchema.save();
@@ -27,5 +27,25 @@ const listSupplier = async(req,res)=> {
     return res.status(200).send(supplierSchema)
 }
 
+const findSupplier = async(req, res) => {
+    const supplierId = await supplier.findById({_id: req.params["_id"]});
+    return !supplierId ? res.status(400).send("No search results"): res.status(200).send({supplierId});
+}
 
-export default {registerSupplier, listSupplier};
+const updateSupplier = async(req, res) => {
+    if (!req.body.name || !req.body.address)  res.status(400).send("Incomplete data");
+
+    const existingSupplier = await supplier.findOne({name: req.body.name, address: req.body.address}); // Corroboramos que el dato que vamos a ingresar no se encuentre ya en la base de datos.
+    if(existingSupplier)    return res.status(400).send("The supplier already exist");
+
+    const supplierUpdate = await supplier.findByIdAndUpdate(req.body._id, {name: req.body.name, address: req.body.address});
+
+    return !supplierUpdate ? res.status(400).send("Error editing supplier"): res.status(200).send({supplierUpdate});
+}
+
+const deleteSupplier = async(req,res) =>{
+    const supplierDelete = await supplier.findByIdAndDelete({_id: req.params["_id"]});
+    return !supplierDelete ? res.status(400).send("Supplier no found") : res.status(200).send("Supplier delete");
+}
+
+export default {registerSupplier, listSupplier, findSupplier, updateSupplier, deleteSupplier };

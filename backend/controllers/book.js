@@ -30,4 +30,27 @@ const listBook = async(req,res)=> {
     return res.status(200).send(bookSchema)
 }
 
-export default { registerBook, listBook};
+const findBook = async(req, res) => {
+    const bookId = await book.findOne({_id: req.params["_id"]});
+    return !bookId ? res.status(400).send("No search results") : res.status(200).send({bookId})
+}
+
+const updateBook = async(req, res) => {
+    if (!req.body.name || !req.body.author || !req.body.pages || !req.body.gender || !req.body.price || !req.body.yearPublication)  res.status(400).send("Incomplete data");
+
+    const existingBook = await book.findOne({name: req.body.name, author: req.body.author, yearPublication: req.body.yearPublication, pages: req.body.pages, gender: req.body.gender, price: req.body.price}); // Corroboramos que el dato que vamos a ingresar no se encuentre ya en la base de datos.
+    if(existingBook)    return res.status(400).send("The book already exist");
+
+    const bookUpdate = await book.findByIdAndUpdate(req.body._id, {name: req.body.name, author: req.body.author, yearPublication: req.body.yearPublication, pages: req.body.pages, gender: req.body.gender, price: req.body.price});
+
+    return !bookUpdate ? res.status(400).send("Error editing book"): res.status(200).send({bookUpdate});
+}
+
+
+const deleteBook = async(req,res) =>{
+    const bookDelete = await book.findByIdAndDelete({_id: req.params["_id"]});
+    return !bookDelete ? res.status(400).send("Book no found") : res.status(200).send("Book delete");
+}
+
+
+export default { registerBook, listBook, findBook, updateBook, deleteBook};
