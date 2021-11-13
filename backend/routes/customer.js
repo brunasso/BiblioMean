@@ -5,6 +5,7 @@ const router = express.Router();
 
 
 router.post('/registerCustomer', customer.registerCustomer);
+router.post('/login', customer.login);
 router.get('/listCustomer', customer.listCustomer);
 router.get("/findCustomer/:_id", customer.findCustomer);
 router.put("/updateCustomer", customer.updateCustomer)
