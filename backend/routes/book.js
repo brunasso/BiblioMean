@@ -8,7 +8,7 @@ const router = express.Router();
 // http://localhost:3004/api/book/registerBook
 router.post('/registerBook',auth, admin, book.registerBook);
 router.get('/listBook',auth, book.listBook);
-router.get("/findBook/:_id",auth, admin, book.findBook);
+router.get("/findBook/:_id",auth, book.findBook);
 router.put("/updateBook",auth, admin, book.updateBook)
 router.delete("/deleteBook/:_id",auth, admin, book.deleteBook)
 
